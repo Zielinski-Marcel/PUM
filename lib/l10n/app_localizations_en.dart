@@ -141,5 +141,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get distance => 'Distance';
 
   @override
-  String get rate => 'Rate';
+  String get pace => 'Pace';
+
+  @override
+  String get note => 'Note';
 }

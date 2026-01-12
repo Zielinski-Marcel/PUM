@@ -362,11 +362,17 @@ abstract class AppLocalizations {
   /// **'Distance'**
   String get distance;
 
-  /// No description provided for @rate.
+  /// No description provided for @pace.
   ///
   /// In en, this message translates to:
-  /// **'Rate'**
-  String get rate;
+  /// **'Pace'**
+  String get pace;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
 }
 
 class _AppLocalizationsDelegate

@@ -44,5 +44,6 @@
   "viewProfile": "View profile",
   "time": "Time",
   "distance": "Distance",
-  "rate": "Rate"
+  "pace": "Pace",
+  "note": "Note"
 }

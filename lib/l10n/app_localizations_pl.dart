@@ -141,5 +141,8 @@ class AppLocalizationsPl extends AppLocalizations {
   String get distance => 'Dystans';
 
   @override
-  String get rate => 'Tempo';
+  String get pace => 'Tempo';
+
+  @override
+  String get note => 'Notatka';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/pages/Profile/presentation/pages/home_page.dart';
 
 import '../../l10n/app_localizations.dart';
 class HomePageButton extends StatelessWidget {
@@ -14,7 +15,10 @@ class HomePageButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
           ),),
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomePage()),
+                (route) => false,
+          );
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

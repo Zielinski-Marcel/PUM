@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/training_model.dart';
 import '../../../../shared/text_tile.dart';
 
 class TrainingTile extends StatelessWidget {
-  final String name;
-  final String type;
-  final String duration;
-  final int distance;
+  final Training training;
   final VoidCallback? onPressed;
 
   const TrainingTile({
     super.key,
-    required this.name,
-    required this.type,
-    required this.duration,
-    required this.distance,
+    required this.training,
     this.onPressed,
   });
 
   Icon get activityTypeIcon {
-    switch (type) {
+    switch (training.type) {
       case 'run':
         return const Icon(Icons.directions_run, size: 32, color: Colors.blue);
       case 'bike':
@@ -30,14 +25,18 @@ class TrainingTile extends StatelessWidget {
     }
   }
 
-
+  String get formattedDuration {
+    final minutes = training.time ~/ 60;
+    final seconds = training.time % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
     final text = AppLocalizations.of(context)!;
 
     return Slidable(
-      key: ValueKey(name),
+      key: ValueKey(training.name),
       endActionPane: ActionPane(
         motion: const StretchMotion(),
         extentRatio: 0.2,
@@ -52,18 +51,17 @@ class TrainingTile extends StatelessWidget {
       ),
       child: TextTile(
         leading: activityTypeIcon,
-        label: name,
+        label: training.name ?? '-',
         value: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${text.time}: $duration min'),
+            Text('${text.time}: $formattedDuration min'),
             const SizedBox(height: 4),
-            Text('${text.distance}: $distance m'),
+            Text('${text.distance}: ${training.distance} m'),
           ],
         ),
       ),
     );
   }
-
 }

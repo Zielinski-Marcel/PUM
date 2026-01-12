@@ -9,7 +9,7 @@ class LogoHeader extends StatelessWidget {
       children: const [
         SizedBox(height: 20),
         Text(
-          'SEX',
+          'S(IŁ)EX',
           style: TextStyle(
             fontSize: 36,
             letterSpacing: 4,

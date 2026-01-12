@@ -5,6 +5,8 @@ import '../../../../shared/logo.dart';
 import '../widgets/HomeWidgets/new_training_button.dart';
 import '../widgets/HomeWidgets/profile_menu.dart';
 
+
+
 class HomePage extends ConsumerWidget {
 
   const HomePage({super.key});
@@ -19,7 +21,9 @@ class HomePage extends ConsumerWidget {
           children: [
             const LogoHeader(),
             const NewTrainingButton(),
-            const TrainingList()
+            Expanded(
+              child: TrainingList(),
+            ),
           ],
         ),
       ),

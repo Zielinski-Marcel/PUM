@@ -5,7 +5,7 @@ class Training {
   final String? type;
   final String? note;
   final int? distance;
-  final int? time;
+  final int time;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   @override
@@ -18,7 +18,7 @@ class Training {
     this.type,
     this.note,
     this.distance,
-    this.time,
+    required this.time,
     required this.createdAt,
     required this.updatedAt,
     this.photoUrl,
