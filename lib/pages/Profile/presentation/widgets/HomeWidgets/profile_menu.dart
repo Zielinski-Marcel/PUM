@@ -12,6 +12,8 @@ class ProfileMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authController = ref.read(authControllerProvider.notifier);
+    final user = ref.watch(authControllerProvider).value;
+
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -33,7 +35,9 @@ class ProfileMenu extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.welcomeUser,
+                    user?.firstName != null && user!.firstName!.isNotEmpty
+                        ? '${AppLocalizations.of(context)!.welcomeUser}, ${user.firstName}'
+                        : AppLocalizations.of(context)!.welcomeUser,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),

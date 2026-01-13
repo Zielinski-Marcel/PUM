@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeUser.
   ///
   /// In en, this message translates to:
-  /// **'Welcome, '**
+  /// **'Welcome '**
   String get welcomeUser;
 
   /// No description provided for @settings.

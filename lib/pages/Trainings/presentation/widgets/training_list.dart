@@ -14,7 +14,6 @@ class TrainingList extends ConsumerWidget {
     final controller = ref.watch(trainingControllerProvider);
     final notifier = ref.read(trainingControllerProvider.notifier);
     final scrollController = ref.watch(trainingScrollControllerProvider);
-    final text = AppLocalizations.of(context)!;
 
     if (controller.isLoading && controller.trainings.isEmpty) {
       return const Center(child: CircularProgressIndicator());

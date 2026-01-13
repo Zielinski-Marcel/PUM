@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:untitled/pages/Trainings/domain/usecases/create_training_usecase.dart';
 import '../../../../exceptions/http_exception.dart';
 import '../../../../exceptions/no_internet_exception.dart';
 import '../../../../exceptions/unauthorized_exception.dart';
+import '../../../../models/RoutePoint.dart';
 import '../../../../models/training_model.dart';
 import '../../domain/usecases/get_training_usecase.dart';
 import '../../domain/usecases/get_trainings_usecase.dart';
@@ -14,15 +15,41 @@ class TrainingController extends ChangeNotifier {
   final UpdateTrainingUseCase updateTrainingUseCase;
   final GetTrainingsUseCase getTrainingsUseCase;
   final GetTrainingUseCase getTrainingUseCase;
+  final CreateTrainingUseCase createTrainingUseCase;
 
   TrainingController({
     required this.updateTrainingUseCase,
     required this.getTrainingsUseCase,
-    required this.getTrainingUseCase
+    required this.getTrainingUseCase,
+    required this.createTrainingUseCase,
   });
 
   final List<Training> _trainings = [];
   final Set<int> _shownTrainingIds = {};
+  List<RoutePoint> _currentRoute = [];
+  List<RoutePoint> get currentRoute => _currentRoute;
+
+  bool _isRecording = false;
+  bool get isRecording => _isRecording;
+
+  void startRecording() {
+    _currentRoute = [];
+    _isRecording = true;
+    notifyListeners();
+  }
+
+  void stopRecording() {
+    _isRecording = false;
+    notifyListeners();
+  }
+
+  void addRoutePoint(RoutePoint point) {
+    if (_isRecording) {
+      _currentRoute.add(point);
+      notifyListeners();
+    }
+  }
+
 
   int _currentPage = 1;
   final int _limit = 10;
@@ -169,6 +196,46 @@ class TrainingController extends ChangeNotifier {
     }
   }
 
+  Future<void> createTraining(Training training) async {
+    _isUpdating = true;
+    _updateError = null;
+    notifyListeners();
+
+    try {
+      await createTrainingUseCase.call(training);
+      await loadTrainings(refresh: true);
+    } catch (e) {
+      _updateError = 'Error creating training: $e';
+    } finally {
+      _isUpdating = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> finishTraining({
+    required String name,
+    required String type,
+    String? note,
+  }) async {
+    final training = Training(
+      id: 0,
+      name: name,
+      type: type,
+      note: note,
+      distance: null,
+      time: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      route: _currentRoute,
+    );
+
+    await createTraining(training);
+
+    _currentRoute = [];
+  }
+
+
+
   void searchWithDebounce(
       String query, {
         Duration delay = const Duration(milliseconds: 400),
@@ -184,14 +251,6 @@ class TrainingController extends ChangeNotifier {
   Future<void> _searchAllTrainings(String query) async {
     _searchQuery = query;
     await loadAllTrainings();
-  }
-
-  Future<void> _handleUnauthorized(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    if (!context.mounted) return;
-
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
   @override

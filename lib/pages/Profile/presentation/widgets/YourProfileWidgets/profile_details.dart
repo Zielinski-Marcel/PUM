@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../shared/text_tile.dart';
 import '../../../../../shared/user_avatar.dart';
-import '../../Providers/profile_controller_provider.dart';
+import '../../../../Auth/presentation/providers/auth_controller_provider.dart';
 
 class ProfileDetails extends ConsumerWidget {
 
@@ -12,7 +12,7 @@ class ProfileDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;
-    final user = ref.watch(profileControllerProvider).user;
+    final user = ref.watch(authControllerProvider).value;
 
     if (user == null) {
       return Center(child: Text(t.error));

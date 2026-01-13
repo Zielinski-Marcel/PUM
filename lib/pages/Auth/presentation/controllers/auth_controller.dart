@@ -85,7 +85,10 @@ class AuthController extends AsyncNotifier<User?> {
       state = AsyncData(await build());
 
       if (context.mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+              (route) => false,
+        );
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(localizations.loginButton)));

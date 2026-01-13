@@ -9,7 +9,7 @@ abstract class TrainingRepository {
     String? type,
     String? note,
   });
-
+  Future<void> createTraining(Training training);
   Future<Training> getTraining(int id);
   Future<List<Training>> getTrainings({int page = 1});
 

@@ -1,6 +1,8 @@
+import 'RoutePoint.dart';
 
 class Training {
   final int id;
+  final List<RoutePoint>? route;
   final String? name;
   final String? type;
   final String? note;
@@ -8,19 +10,18 @@ class Training {
   final int time;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  @override
   final String? photoUrl;
-
 
   Training({
     required this.id,
+    this.route,
     this.name,
     this.type,
     this.note,
     this.distance,
     required this.time,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     this.photoUrl,
   });
 
@@ -33,6 +34,9 @@ class Training {
       distance: json['distance'],
       time: json['time'],
       photoUrl: json['photo_url'],
+      route: (json['route'] as List?)
+          ?.map((e) => RoutePoint.fromJson(e))
+          .toList(),
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,
@@ -41,6 +45,7 @@ class Training {
           : null,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -50,6 +55,7 @@ class Training {
       'distance': distance,
       'time': time,
       'photo_url': photoUrl,
+      'route': route?.map((e) => e.toJson()).toList(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

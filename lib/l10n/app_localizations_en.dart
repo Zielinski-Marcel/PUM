@@ -75,7 +75,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startTraining => 'Start Training';
 
   @override
-  String get welcomeUser => 'Welcome, ';
+  String get welcomeUser => 'Welcome ';
 
   @override
   String get settings => 'Settings';

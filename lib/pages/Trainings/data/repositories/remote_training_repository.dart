@@ -11,6 +11,10 @@ class RemoteTrainingRepository implements TrainingRepository {
   RemoteTrainingRepository(this.dataSource);
 
   @override
+  Future<void> createTraining(Training training) {
+    return dataSource.createTraining(training);
+  }
+  @override
   Future<void> updateTraining({
     required BuildContext context,
     String? name,
