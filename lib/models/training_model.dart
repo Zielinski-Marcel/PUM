@@ -1,6 +1,8 @@
+import 'package:latlong2/latlong.dart';
 
 class Training {
   final int id;
+  final List<LatLng>? route;
   final String? name;
   final String? type;
   final String? note;
@@ -8,12 +10,11 @@ class Training {
   final int time;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  @override
   final String? photoUrl;
-
 
   Training({
     required this.id,
+    this.route,
     this.name,
     this.type,
     this.note,
@@ -33,6 +34,14 @@ class Training {
       distance: json['distance'],
       time: json['time'],
       photoUrl: json['photo_url'],
+      route: (json['route'] as List?)
+          ?.map(
+            (e) => LatLng(
+          (e['lat'] as num).toDouble(),
+          (e['lng'] as num).toDouble(),
+        ),
+      )
+          .toList(),
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'])
           : null,
@@ -41,6 +50,7 @@ class Training {
           : null,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -50,6 +60,14 @@ class Training {
       'distance': distance,
       'time': time,
       'photo_url': photoUrl,
+      'route': route
+          ?.map(
+            (e) => {
+          'lat': e.latitude,
+          'lng': e.longitude,
+        },
+      )
+          .toList(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

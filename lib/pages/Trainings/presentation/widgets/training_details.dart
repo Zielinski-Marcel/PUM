@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:untitled/pages/Trainings/presentation/widgets/training_map.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../shared/text_tile.dart';
 import '../../../../models/training_model.dart';
@@ -17,15 +18,15 @@ class TrainingDetails extends ConsumerWidget {
     String? paceStr;
     String? timeStr;
 
-    if (training.time != null && training.time! > 0) {
-      final minutes = training.time! ~/ 60;
-      final seconds = training.time! % 60;
+    if ( training.time > 0) {
+      final minutes = training.time ~/ 60;
+      final seconds = training.time % 60;
       timeStr = '$minutes:${seconds.toString().padLeft(2, '0')} min';
     }
 
-    if (training.distance != null && training.time != null && training.time! > 0) {
-      averageSpeed = (training.distance! / 1000) / (training.time! / 3600);
-      final paceSeconds = training.time! / (training.distance! / 1000);
+    if (training.distance != null  && training.time > 0) {
+      averageSpeed = (training.distance! / 1000) / (training.time / 3600);
+      final paceSeconds = training.time / (training.distance! / 1000);
       final paceMinutes = paceSeconds ~/ 60;
       final paceRemSeconds = (paceSeconds % 60).round();
       paceStr = '$paceMinutes:${paceRemSeconds.toString().padLeft(2, '0')} min/km';
@@ -34,6 +35,7 @@ class TrainingDetails extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        TrainingMap(training: training),
         TextTile(
           label: t.time,
           value: Text(
