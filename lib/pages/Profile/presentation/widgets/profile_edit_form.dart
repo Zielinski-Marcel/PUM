@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:untitled/shared/language_switch_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/button.dart';
 import '../../../../shared/text_field.dart';
@@ -142,6 +143,10 @@ class _EditProfileFormFieldsState extends ConsumerState<EditProfileFormFields> {
           controller: widget.weightController,
           keyboardType: TextInputType.number,
         ),
+
+        const SizedBox(height: 24),
+
+        LanguageSwitchButton(),
 
         const SizedBox(height: 24),
 

@@ -145,4 +145,37 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get note => 'Notatka';
+
+  @override
+  String get endTraining => 'Koniec';
+
+  @override
+  String get trainingName => 'Nazwa';
+
+  @override
+  String get run => 'Bieg';
+
+  @override
+  String get bike => 'Rower';
+
+  @override
+  String get walk => 'Marsz';
+
+  @override
+  String get trainingType => 'Typ Treningu';
+
+  @override
+  String get training => 'trening';
+
+  @override
+  String get duration => 'Czas trwania';
+
+  @override
+  String get cancel => 'Anuluj';
+
+  @override
+  String get trainingSentSuccess => 'Wysłano trening';
+
+  @override
+  String get trainingSendError => 'Wysyłanie nie powiodło się';
 }

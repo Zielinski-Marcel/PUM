@@ -145,4 +145,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get note => 'Note';
+
+  @override
+  String get endTraining => 'Finish';
+
+  @override
+  String get trainingName => 'Name';
+
+  @override
+  String get run => 'Run';
+
+  @override
+  String get bike => 'Bike';
+
+  @override
+  String get walk => 'Walk';
+
+  @override
+  String get trainingType => 'Training type';
+
+  @override
+  String get training => 'training';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get trainingSentSuccess => 'Training Sent';
+
+  @override
+  String get trainingSendError => 'Training Send Error';
 }

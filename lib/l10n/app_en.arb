@@ -45,5 +45,16 @@
   "time": "Time",
   "distance": "Distance",
   "pace": "Pace",
-  "note": "Note"
+  "note": "Note",
+  "endTraining": "Finish",
+  "trainingName": "Name",
+  "run": "Run",
+  "bike": "Bike",
+  "walk": "Walk",
+  "trainingType": "Training type",
+  "training": "training",
+  "duration": "Duration",
+  "cancel": "Cancel",
+  "trainingSentSuccess": "Training Sent",
+  "trainingSendError": "Training Send Error",
 }

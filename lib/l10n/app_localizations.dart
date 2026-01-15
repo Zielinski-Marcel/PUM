@@ -373,6 +373,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Note'**
   String get note;
+
+  /// No description provided for @endTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get endTraining;
+
+  /// No description provided for @trainingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get trainingName;
+
+  /// No description provided for @run.
+  ///
+  /// In en, this message translates to:
+  /// **'Run'**
+  String get run;
+
+  /// No description provided for @bike.
+  ///
+  /// In en, this message translates to:
+  /// **'Bike'**
+  String get bike;
+
+  /// No description provided for @walk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get walk;
+
+  /// No description provided for @trainingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Training type'**
+  String get trainingType;
+
+  /// No description provided for @training.
+  ///
+  /// In en, this message translates to:
+  /// **'training'**
+  String get training;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @trainingSentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Training Sent'**
+  String get trainingSentSuccess;
+
+  /// No description provided for @trainingSendError.
+  ///
+  /// In en, this message translates to:
+  /// **'Training Send Error'**
+  String get trainingSendError;
 }
 
 class _AppLocalizationsDelegate

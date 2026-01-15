@@ -45,8 +45,16 @@
   "time": "Czas",
   "distance": "Dystans",
   "pace": "Tempo",
-  "note": "Notatka"
-
-
-
+  "note": "Notatka",
+  "endTraining": "Koniec",
+  "trainingName": "Nazwa",
+  "run": "Bieg",
+  "bike": "Rower",
+  "walk": "Marsz",
+  "trainingType": "Typ Treningu",
+  "training": "trening",
+  "duration": "Czas trwania",
+  "cancel": "Anuluj",
+  "trainingSentSuccess": "Wysłano trening",
+  "trainingSendError": "Wysyłanie nie powiodło się"
 }

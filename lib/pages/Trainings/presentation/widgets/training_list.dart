@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../pages/training_details_page.dart';
 import '../providers/training_controller_provider.dart';
 import '../providers/training_scroll_controller_provider.dart';

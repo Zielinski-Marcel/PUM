@@ -14,7 +14,7 @@ class ActiveTrainingPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FakeTrainingButton(),
+            TrainingButtons(),
           ],
         ),
       ),
