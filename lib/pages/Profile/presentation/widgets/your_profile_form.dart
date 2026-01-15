@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/button.dart';
 import '../../../../shared/user_avatar.dart';
+import '../Providers/your_profile_provider.dart';
 import '../pages/details_profile_page.dart';
 import 'YourProfileWidgets/user_stats.dart';
 import 'YourProfileWidgets/ranking.dart';

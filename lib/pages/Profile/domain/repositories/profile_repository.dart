@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../models/top_users.dart';
 import '../../../../models/user_model.dart';
+import '../../../../models/user_stats.dart';
 
 abstract class ProfileRepository {
   Future<void> updateProfile({
@@ -14,5 +16,7 @@ abstract class ProfileRepository {
   });
 
   Future<User> getProfile();
+  Future<UserStats> getStats();
+  Future<List<TopUser>> getTopUsers();
   Future<void> deleteUserRequest();
 }

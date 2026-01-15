@@ -34,7 +34,7 @@ class Training {
       distance: json['distance'],
       time: json['time'],
       photoUrl: json['photo_url'],
-      route: (json['route'] as List?)
+      route: (json['gps_trace'] as List?)
           ?.map((e) => RoutePoint.fromJson(e))
           .toList(),
       createdAt: json['created_at'] != null
@@ -55,7 +55,7 @@ class Training {
       'distance': distance,
       'time': time,
       'photo_url': photoUrl,
-      'route': route?.map((e) => e.toJson()).toList(),
+      'gps_trace': route?.map((e) => e.toJson()).toList(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

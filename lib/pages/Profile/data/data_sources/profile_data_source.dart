@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:untitled/network/http_client.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/top_users.dart';
 import '../../../../models/user_model.dart';
+import '../../../../models/user_stats.dart';
 
 class ProfileDataSource {
   final HttpClient httpClient;
@@ -12,6 +14,17 @@ class ProfileDataSource {
   Future<User> getProfile() async {
     final response = await httpClient.get('/api/profile');
     return User.fromJson(response['data']);
+  }
+
+  Future<UserStats> getStats() async {
+    final response = await httpClient.get('/api/activities/stats');
+    return UserStats.fromJson(response['overall']);
+  }
+
+  Future<List<TopUser>> getTopUsers() async {
+    final response = await httpClient.get('/api/activities/top-users');
+    final list = response['top_users'] as List;
+    return list.map((e) => TopUser.fromJson(e)).toList();
   }
 
   Future<void> updateProfile({

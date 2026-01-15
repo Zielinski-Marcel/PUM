@@ -1,55 +1,62 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../models/top_users.dart';
+import '../../../../models/user_stats.dart';
+import '../../data/providers/profile_repository_provider.dart';
+import '../../domain/providers/get_top_users_usecase_provider.dart';
+import '../../domain/providers/get_user_stats_usecase_provider.dart';
+import '../Providers/profile_user_provider.dart';
+
 enum ProfileSection { stats, ranking }
 
-class UserStats {
-  final int workouts;
-  final double totalDistance; // w km
-  final double averageSpeed; // w km/h
-
-  UserStats({
-    required this.workouts,
-    required this.totalDistance,
-    required this.averageSpeed,
-  });
-}
-
-class RankingEntry {
-  final String username;
-  final double distance; // km
-
-  RankingEntry({required this.username, required this.distance});
-}
-
 class YourProfileController extends StateNotifier<ProfileSection> {
-  YourProfileController() : super(ProfileSection.stats);
+  final Ref ref;
 
-  // Dane statystyk
-  UserStats userStats = UserStats(workouts: 42, totalDistance: 315, averageSpeed: 9.4);
+  YourProfileController(this.ref) : super(ProfileSection.stats);
 
-  // Ranking
-  List<RankingEntry> ranking = [
-    RankingEntry(username: 'Użytkownik 1', distance: 52),
-    RankingEntry(username: 'Użytkownik 2', distance: 48),
-    RankingEntry(username: 'Użytkownik 3', distance: 44),
-  ];
+  UserStats? userStats;
+  List<TopUser> ranking = [];
+
+  Future<void> loadProfileData() async {
+    await Future.wait([
+      _loadUser(),
+      _loadStats(),
+      _loadRanking(),
+    ]);
+  }
+
+  Future<void> _loadUser() async {
+    final repository = ref.read(profileRepositoryProvider);
+    final user = await repository.getProfile();
+    ref.read(profileUserProvider.notifier).state = user;
+  }
+
+  Future<void> _loadStats() async {
+    final getStats = ref.read(getUserStatsUseCaseProvider);
+    final stats = await getStats();
+
+    userStats = UserStats(
+      activities: stats.activities,
+      distance: stats.distance,
+      averageSpeed: stats.averageSpeed,
+    );
+  }
+
+  Future<void> _loadRanking() async {
+    final getTopUsers = ref.read(getTopUserUseCaseProvider);
+    final topUsers = await getTopUsers();
+
+    ranking = topUsers
+        .map(
+          (u) => TopUser(
+        firstName: u.username,
+        totalDistance: u.totalDistance, id: 0, lastName: '',
+      ),
+    )
+        .toList();
+  }
 
   void changeSection(ProfileSection section) {
     state = section;
   }
-
-  // Funkcja do aktualizacji statystyk (np. z API)
-  void updateStats(UserStats stats) {
-    userStats = stats;
-  }
-
-  // Funkcja do aktualizacji rankingu (np. z API)
-  void updateRanking(List<RankingEntry> newRanking) {
-    ranking = newRanking;
-  }
 }
-
-// Provider
-final yourProfileControllerProvider = StateNotifierProvider<YourProfileController, ProfileSection>(
-      (ref) => YourProfileController(),
-);

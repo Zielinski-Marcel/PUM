@@ -1,16 +1,21 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../exceptions/http_exception.dart';
-import '../../../../exceptions/no_internet_exception.dart';
+
 import '../../../../exceptions/unauthorized_exception.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/user_model.dart';
+import '../../../../models/top_users.dart';
+import '../../../../models/user_stats.dart';
+
+import '../../../Auth/presentation/pages/login_page.dart';
 import '../../domain/usecases/delete_user_request_usecase.dart';
 import '../../domain/usecases/get_profile_usecase.dart';
 import '../../domain/usecases/update_profile_usecase.dart';
+import '../../domain/usecases/get_top_users_usecase.dart';
+import '../../domain/usecases/get_user_stats_usecase.dart';
+
 import '../Providers/profile_user_provider.dart';
 
 class ProfileController extends ChangeNotifier {
@@ -18,13 +23,22 @@ class ProfileController extends ChangeNotifier {
   final UpdateProfileUseCase updateProfileUseCase;
   final GetProfileUseCase getProfileUseCase;
   final DeleteUserRequestUseCase deleteUserRequestUseCase;
+  final GetTopUsersUseCase getTopUsersUseCase;
+  final GetUserStatsUseCase getUserStatsUseCase;
 
   ProfileController(
       this.ref,
       this.updateProfileUseCase,
       this.getProfileUseCase,
       this.deleteUserRequestUseCase,
-      );
+      this.getTopUsersUseCase,
+      this.getUserStatsUseCase,
+      ) {
+    fetchUserProfile();
+    fetchUserStats();
+    fetchTopUsers();
+  }
+
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -37,33 +51,105 @@ class ProfileController extends ChangeNotifier {
 
   User? get user => ref.read(profileUserProvider);
 
+
+  UserStats? _userStats;
+  UserStats? get userStats => _userStats;
+
+  bool _statsLoading = false;
+  bool get statsLoading => _statsLoading;
+
+
+
+  List<TopUser> _topUsers = [];
+  List<TopUser> get topUsers => _topUsers;
+
+  bool _topUsersLoading = false;
+  bool get topUsersLoading => _topUsersLoading;
+
+
   Future<void> fetchUserProfile({BuildContext? context}) async {
     final prefs = await SharedPreferences.getInstance();
 
     try {
       final userJson = prefs.getString('user');
       if (userJson != null) {
-        final user = User.fromJson(jsonDecode(userJson));
-        ref.read(profileUserProvider.notifier).state = user;
+        ref.read(profileUserProvider.notifier).state =
+            User.fromJson(jsonDecode(userJson));
       }
 
-      final fetchUser = await getProfileUseCase();
-      ref.read(profileUserProvider.notifier).state = fetchUser;
-      await prefs.setString('user', jsonEncode(fetchUser.toJson()));
+      final fetchedUser = await getProfileUseCase();
+      ref.read(profileUserProvider.notifier).state = fetchedUser;
+
+      await prefs.setString(
+        'user',
+        jsonEncode(fetchedUser.toJson()),
+      );
     } on UnauthorizedException {
       if (context != null && context.mounted) {
         await _handleUnauthorized(context);
       }
     } catch (_) {
       if (context != null && context.mounted) {
-        final messenger = ScaffoldMessenger.of(context);
         final localizations = AppLocalizations.of(context)!;
-        messenger.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(localizations.error)),
         );
       }
     } finally {
       _isInitialized = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchUserStats({BuildContext? context}) async {
+    _statsLoading = true;
+    notifyListeners();
+
+    try {
+      final stats = await getUserStatsUseCase();
+      _userStats = stats;
+    } on UnauthorizedException {
+      if (context != null && context.mounted) {
+        await _handleUnauthorized(context);
+      }
+    } catch (e) {
+      _userStats = null;
+      debugPrint('Error fetching user stats: $e');
+      if (context != null && context.mounted) {
+        final localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(localizations.error)),
+        );
+      }
+    } finally {
+      _statsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTopUsers({BuildContext? context}) async {
+    _topUsersLoading = true;
+    notifyListeners();
+
+    try {
+
+      final top = await getTopUsersUseCase();
+      _topUsers = top;
+    } on UnauthorizedException {
+      if (context != null && context.mounted) {
+        await _handleUnauthorized(context);
+      }
+    } catch (e) {
+      _topUsers = [];
+      debugPrint('Error fetching top users: $e');
+      if (context != null && context.mounted) {
+        final localizations = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(localizations.error)),
+        );
+      }
+    } finally {
+      _topUsersLoading = false;
       notifyListeners();
     }
   }
@@ -80,100 +166,63 @@ class ProfileController extends ChangeNotifier {
     String? birthDate,
     String? gender,
     int? height,
-    int? weight
+    int? weight,
   }) async {
     try {
       await updateProfileUseCase(
         context: context,
         firstName: firstName?.trim(),
-        lastName: (lastName != null && lastName.trim().isNotEmpty)
-            ? lastName.trim()
-            : null,
-        birthDate: (birthDate != null && birthDate.isNotEmpty)
-            ? birthDate
-            : null,
-        gender: (gender != null && gender.isNotEmpty)
-            ? gender
-            : null,
+        lastName: lastName?.trim().isNotEmpty == true ? lastName!.trim() : null,
+        birthDate: birthDate?.isNotEmpty == true ? birthDate : null,
+        gender: gender?.isNotEmpty == true ? gender : null,
         height: height,
         weight: weight,
       );
-
 
       await fetchUserProfile();
 
       final updatedUser = ref.read(profileUserProvider);
       if (updatedUser != null) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', jsonEncode(updatedUser.toJson()));
+        await prefs.setString(
+          'user',
+          jsonEncode(updatedUser.toJson()),
+        );
       }
 
       if (!context.mounted) return;
-
       final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-
-      messenger.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(localizations.profileUpdateSuccess)),
       );
 
       toggleEdit();
-    } on UnauthorizedException {
-      if (!context.mounted) return;
-      await _handleUnauthorized(context);
-    } on HttpException catch (e) {
-      if (!context.mounted) return;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(SnackBar(content: Text(e.message)));
-    } on NoInternetException {
+    } catch (_) {
       if (!context.mounted) return;
       final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
-        SnackBar(content: Text(localizations.noInternetError)),
-      );
-    }  catch (_) {
-      if (!context.mounted) return;
-      final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(localizations.error)),
       );
     }
   }
 
+  Future<void> refreshData({BuildContext? context}) async {
+    await Future.wait([
+      fetchUserProfile(context: context),
+      fetchUserStats(context: context),
+      fetchTopUsers(context: context),
+    ]);
+  }
+
   Future<void> deleteUser({required BuildContext context}) async {
     _setLoading(true);
-
     try {
       await deleteUserRequestUseCase();
 
       if (!context.mounted) return;
       final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(localizations.profileDeleteRequestSuccess)),
-      );
-    } on UnauthorizedException {
-      if (!context.mounted) return;
-      await _handleUnauthorized(context);
-    } on NoInternetException {
-      if (!context.mounted) return;
-      final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
-        SnackBar(content: Text(localizations.noInternetError)),
-      );
-    } on HttpException catch (e) {
-      if (!context.mounted) return;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(SnackBar(content: Text(e.message)));
-    } catch (_) {
-      if (!context.mounted) return;
-      final localizations = AppLocalizations.of(context)!;
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showSnackBar(
-        SnackBar(content: Text(localizations.error)),
       );
     } finally {
       _setLoading(false);
@@ -189,8 +238,11 @@ class ProfileController extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     ref.read(profileUserProvider.notifier).state = null;
-    if (!context.mounted) return;
 
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+          (route) => false,
+    );
   }
 }

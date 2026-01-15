@@ -12,7 +12,7 @@ class AuthDataSource {
 
   Future<User> login(String email, String password) async {
     final response = await httpClient.post(
-      '/api/auth/login',
+      '/api/login',
       body: {'email': email, 'password': password},
     );
 
@@ -31,7 +31,7 @@ class AuthDataSource {
     String confirmPassword,
   ) async {
     await httpClient.post(
-      '/api/auth/register',
+      '/api/register',
       body: {
         'email': email,
         'password': password,
@@ -41,10 +41,10 @@ class AuthDataSource {
   }
 
   Future<void> logout() async {
-    await httpClient.post('/api/auth/logout');
+    await httpClient.post('/api/logout');
   }
 
   Future<void> forgotPassword(String email) async {
-    await httpClient.post('/api/auth/forgot-password', body: {'email': email});
+    await httpClient.post('/api/forgot-password', body: {'email': email});
   }
 }

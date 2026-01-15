@@ -12,21 +12,24 @@ class TrainingDataSource {
 
   Future<void> createTraining(Training training) async {
     final body = training.toJson();
-    await httpClient.post('/api/trainings', body: body);
+    await httpClient.post('/api/activities/add', body: body);
   }
 
   Future<Training> getTraining(int id) async {
-    final response = await httpClient.get('/api/trainings/$id');
+    final response = await httpClient.get('/api/activities/$id');
     return Training.fromJson(response['data'] as Map<String, dynamic>);
   }
 
   Future<List<Training>> getTrainings({int page = 1}) async {
-    final response = await httpClient.get('/api/trainings?page=$page');
-    final List<dynamic> trainingsJson = response['data'];
+    final response = await httpClient.get('/api/activities?page=$page');
+
+    final List<dynamic> trainingsJson = response as List<dynamic>;
+
     return trainingsJson
         .map((json) => Training.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
 
   Future<void> updateTraining({
     required BuildContext context,
@@ -52,6 +55,6 @@ class TrainingDataSource {
       throw Exception(localizations.error);
     }
 
-    await httpClient.put('/api/trainings', body: body);
+    await httpClient.put('/api/activities', body: body);
   }
 }
